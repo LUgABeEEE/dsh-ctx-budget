@@ -64,3 +64,24 @@ jobs:
           rc=$?
           set -e
           test "$rc" -eq 1
+
+  plugin:
+    name: plugin tests (node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["20", "22"]
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      - name: Plugin unit and integration tests
+        run: node --test

@@ -1,0 +1,50 @@
+{
+  "name": "dsh-ctx-budget",
+  "version": "0.2.0",
+  "description": "Audit the static context a DSH agent pays for on every request: rules, memory, skills, tool surface, sessions and KB — four read-only DSH tools backed by a bundled Python CLI.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "ctxbudget",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "compatibility": {
+      "dsh": ">=0.2.0",
+      "dshReleases": {
+        "0.2.1-rc.2": "compatible"
+      }
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "dsh-plugin",
+    "dsh",
+    "context",
+    "tokens",
+    "memory",
+    "skills",
+    "audit"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LUgABeEEE/dsh-ctx-budget.git"
+  },
+  "homepage": "https://github.com/LUgABeEEE/dsh-ctx-budget#readme",
+  "license": "MIT"
+}

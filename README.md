@@ -46,6 +46,31 @@ ctxbudget capabilities --doc CAPABILITIES.md    # 校验能力地图里的失效
 
 主目录解析优先级固定为：`--dsh-home DIR` > 环境变量 `$DSH_HOME` > `~/.dsh`。
 
+## 作为 DSH 插件使用
+
+同一个仓库也是一个 DSH 插件包（`package.json` 里声明了 `dsh.bundle`）：装上以后模型可以直接
+调用四个**只读**工具，不需要自己记命令行。
+
+```bash
+dsh plugin add --profile web \
+  https://github.com/LUgABeEEE/dsh-ctx-budget/releases/download/v0.2.0/dsh-ctx-budget-0.2.0.tgz
+```
+
+| 工具 | 作用 |
+| --- | --- |
+| `ctx_budget_report` | 六层静态上下文快照（规则 / 记忆 / 技能 / 工具面 / 会话 / KB） |
+| `ctx_budget_audit` | 记忆库只读体检：无 tags、重复内容、超 90 天、超限文件 |
+| `ctx_budget_check` | 校验能力地图里的失效路径与命令 |
+| `ctx_budget_doctor` | 主目录布局与 Python 运行时自检 |
+
+插件自带 `ctxbudget/` 这份 Python 代码，用宿主上的 `python3` 执行；换解释器用插件选项
+`python`（例如 `python3.12`）或环境变量 `CTXBUDGET_PYTHON`。**`memory-archive` 不暴露给模型**——
+移动条目必须由人显式跑 `--apply`，四个工具全部只读。
+
+插件侧测试与 CLI 分开跑：`node --test`（14 个用例：参数拼装、解释器解析、缺 Python、
+四个工具的注册与实际调用）。
+
+
 ## 子命令
 
 ### doctor

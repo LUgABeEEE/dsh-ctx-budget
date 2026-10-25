@@ -1,0 +1,17 @@
+# dsh-ctx-budget bundle patch
+#
+# One host-side row. The plugin registers four READ-ONLY tools backed by the
+# bundled ctxbudget Python CLI (shipped in ./ctxbudget, run through the host's
+# python3 unless the plugin option `python` is set):
+#
+#   ctx_budget_report   six-layer static-context snapshot
+#   ctx_budget_audit    memory duplicate / stale / over-limit report
+#   ctx_budget_check    verify backticked paths and commands in a capability map
+#   ctx_budget_doctor   environment / layout check
+#
+# No client half: there is no panel and no settings page, so `dsh.client` is not
+# declared and this package installs into the host only.
+- insert:
+    - id: ctx-budget
+      name: "./lib/index.js"
+      config: {}

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dsh-ctx-budget"
-version = "0.1.0"
+version = "0.2.0"
 description = "Audit and trim the static context budget of an agent home: rules, memory, skills, tool surface, sessions and KB."
 readme = "README.md"
 requires-python = ">=3.10"

@@ -1,0 +1,5 @@
+# Never ship bytecode: .pyc embeds the build machine's absolute source paths.
+**/__pycache__
+**/*.pyc
+tests/
+test-plugin/

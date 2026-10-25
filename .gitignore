@@ -7,6 +7,11 @@ dist/
 .venv/
 venv/
 
+# Node / DSH 插件打包
+node_modules/
+package-lock.json
+*.tgz
+
 # 运行时备份（本工具 apply 时生成）
 *.bak-*
 *.tmp
