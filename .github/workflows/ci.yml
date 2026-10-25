@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: tests (py${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: CLI help
+        run: python -m ctxbudget --help
+
+      - name: Smoke test in a temporary home
+        run: |
+          set -euo pipefail
+          TMP="$(mktemp -d)"
+          mkdir -p "$TMP/home/memory/projects" "$TMP/home/skills/demo" "$TMP/home/sessions/demo"
+          printf '# rules\n' > "$TMP/home/AGENTS.md"
+          printf '{"items":[]}\n' > "$TMP/home/memory/global.json"
+          printf -- '---\nname: demo\ndescription: "demo skill"\n---\n\n# demo\n' > "$TMP/home/skills/demo/SKILL.md"
+          printf '%s\n' '{"type":"session","id":"s1"}' '{"type":"user/message","seq":1,"data":{"content":"hi"}}' '{"type":"assistant/message","seq":2,"data":{"usage":{"inputTokens":100,"cacheReadTokens":0}}}' > "$TMP/home/sessions/demo/session.jsonl"
+          printf '\x60/etc/hostname\x60\n' > "$TMP/CAPABILITIES.md"
+
+          python -m ctxbudget doctor --dsh-home "$TMP/home"
+          python -m ctxbudget capabilities --doc "$TMP/CAPABILITIES.md" --base "$TMP"
+          python -m ctxbudget skills --dsh-home "$TMP/home"
+          python -m ctxbudget memory-audit --dsh-home "$TMP/home" --json > "$TMP/audit.json"
+          python -m ctxbudget memory-archive --dsh-home "$TMP/home"
+          python -m ctxbudget probe --dsh-home "$TMP/home" --json > "$TMP/probe.json"
+          python -m ctxbudget baseline --dsh-home "$TMP/home" --workspace "$TMP" --json > "$TMP/baseline.json"
+          python -m json.tool "$TMP/audit.json" > /dev/null
+          python -m json.tool "$TMP/probe.json" > /dev/null
+          python -m json.tool "$TMP/baseline.json" > /dev/null
+
+      - name: Doctor reports a missing home clearly
+        run: |
+          set +e
+          python -m ctxbudget doctor --dsh-home /tmp/definitely-missing-ctxbudget-home
+          rc=$?
+          set -e
+          test "$rc" -eq 1

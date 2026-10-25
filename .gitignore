@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# 运行时备份（本工具 apply 时生成）
+*.bak-*
+*.tmp
+
+# 工具/编辑器
+.pytest_cache/
+.coverage
+.DS_Store
